@@ -1,0 +1,18 @@
+FROM ubuntu:latest
+
+RUN apt-get update && \
+    apt-get install -y git nodejs npm
+
+WORKDIR /app
+
+RUN git clone https://github.com/difli/workshop-streaming-game.git /app
+
+WORKDIR /app/client
+RUN npm install
+
+CMD ["npm" , "start"]
+
+# docker build -f ./Dockerfile.client -t streaming-game-client .
+# docker tag streaming-game-client dieterfl/streaming-game-client:demo
+# docker run -p 3000:3000 streaming-game-client:demo
+# docker push dieterfl/streaming-game-client:demo

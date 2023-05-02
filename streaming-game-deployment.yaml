@@ -1,0 +1,60 @@
+# kubectl create configmap secure-connect --from-file=secure-connect.zip
+# kubectl create configmap config --from-file=.env
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaming-game
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streaming-game
+  template:
+    metadata:
+      labels:
+        app: streaming-game
+    spec:
+      containers:
+      - name: api
+        image: dieterfl/streaming-game-api:demo
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8000
+        volumeMounts:
+        - name: secure-connect
+          mountPath: /app/api/secure-connect.zip
+          subPath: secure-connect.zip
+        - name: config
+          mountPath: /app/api/.env
+          subPath: .env
+      - name: client
+        image: dieterfl/streaming-game-client:demo
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+      volumes:
+      - name: secure-connect
+        configMap:
+          name: secure-connect
+      - name: config
+        configMap:
+          name: config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaming-game
+spec:
+  selector:
+    app: streaming-game
+  ports:
+    - name: port1
+      protocol: TCP
+      port: 3000 # The port to expose to the outside
+      targetPort: 3000 # The port the application is running on in the pods
+    - name: port2
+      protocol: TCP
+      port: 8000 # The port to expose to the outside
+      targetPort: 8000 # The port the application is running on in the pods
+  type: LoadBalancer

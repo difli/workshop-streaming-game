@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+
+  # api
+  api:
+    image: dieterfl/streaming-game-api:demo
+    container_name: api
+    volumes:
+      - ./.env:/app/api/.env
+      - ./secure-connect.zip:/app/api/secure-connect.zip
+    ports:
+      - 8000:8000
+    networks:
+      - game
+
+  # client
+  pulsar:
+    image: dieterfl/streaming-game-client:demo
+    container_name: client
+    ports:
+      - 3000:3000
+    networks:
+      - game
+
+networks:
+  game:
