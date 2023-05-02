@@ -183,7 +183,7 @@ values:
 
 - **Create the database**. Review all the fields to make sure they are as shown, and click the `Create Database` button. You will be on the **Free** plan.
 
-| Parameter | Value 
+| Parameter | Value
 |---|---|
 | Database name | workshops  |
 | Keyspace name | drapetisca |
@@ -832,3 +832,29 @@ your badge, and see you next time!
 > DataStax Developers
 
 ![Theridion grallator](images/Theridion_grallator.png)
+
+## Run the game on docker
+
+- git clone https://github.com/difli/workshop-streaming-game.git
+- Copy you Astra DB secure connect bundle file into the root directory of the project.
+- Rename your secure connect bundle file to "secure-connect.zip"
+- copy [.env.sample](api/.env.sample) file into the root directory of this project
+- Rename the just copied .env.sample file to .env
+- Ensure the Astra DB and Astra Streaming credentials are all set in the .env file
+- run
+```
+docker-compose up -d
+```
+
+## Run it on kubernets
+
+- Follow the steps under Run game in docker except the last step
+- Create configmaps
+```
+kubectl create configmap secure-connect --from-file=secure-connect.zip
+kubectl create configmap config --from-file=.env
+```
+- deploy to kubernetes
+```
+kubectl apply -f streaming-game-deployment.yaml
+```
